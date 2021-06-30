@@ -5,6 +5,8 @@ import Config from "./config/config";
 import { rootRouter } from "./modules";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+import dbConfig from "./config/dbConfig";
+import { createConnection } from "typeorm";
 
 const app = express();
 
@@ -37,9 +39,30 @@ app.use(
   }
 );
 
+const startServer = (PORT: any) =>
+  app
+    .listen(PORT)
+    .on("listening", () => {
+      console.log("Server is listening ", PORT, app.get("env"));
+    })
+    .on("error", (e: any) => {
+      if (e === "EADDRINUSE") {
+        console.log(`The Port: ${PORT} is Already in Use`);
+      }
+    });
+
+createConnection(dbConfig as any)
+  .then(async (connection) => {
+    console.log("Database connection successfull.");
+    await connection.runMigrations();
+    // await connection.queryResultCache.clear();
+    startServer(Config.port || "8080");
+  })
+  .catch((error) => console.log("TypeORM Connection error: ", error));
+
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
-app.listen(Config.port, () => {
-  console.log(`Express with Typescript! http://localhost:${Config.port}`);
-});
+// app.listen(Config.port, () => {
+//   console.log(`Express with Typescript! http://localhost:${Config.port}`);
+// });
