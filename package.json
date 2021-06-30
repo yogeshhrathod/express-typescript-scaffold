@@ -1,14 +1,21 @@
 {
   "scripts": {
     "build": "tsc",
-    "start": "nodemon index.ts"
+    "start": "nodemon src/index.ts"
   },
   "dependencies": {
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "http-errors": "^1.8.0"
   },
   "devDependencies": {
+    "@types/compression": "^1.7.0",
+    "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.12",
+    "@types/http-errors": "^1.8.0",
     "@types/node": "^15.12.4",
     "nodemon": "^2.0.7",
     "ts-node": "^10.0.0",
