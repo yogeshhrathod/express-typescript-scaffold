@@ -6,24 +6,42 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from "typeorm";
+import { transformPassword } from "../authentication";
+import { Base } from "../common/base.enitity";
 
 @Entity("users")
-export class User {
+export class User extends Base {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ type: "varchar" })
-  name: string;
+  firstName: string;
+
+  @Column({ type: "varchar" })
+  lastName: string;
 
   @Column({ type: "varchar" })
   email: string;
 
-  @CreateDateColumn({ name: "created_on" })
-  created_on: Date;
+  @Column({ type: "varchar" })
+  password: string;
 
-  @UpdateDateColumn({ name: "updated_on" })
-  updated_on: Date;
+  @Column({ type: "varchar", nullable: true })
+  organization?: string;
 
-  @DeleteDateColumn({ name: "deleted_on" })
-  deleted_on: Date;
+  @Column({ default: false, type: "boolean" })
+  isVerified: boolean;
+
+  @Column({ default: true, type: "boolean" })
+  isActive: boolean;
+
+  constructor(user: User) {
+    super();
+    if (user) {
+      this.email = (user.email || "").toLowerCase();
+      this.password = transformPassword(user.password);
+      this.firstName = user.firstName;
+      this.lastName = user.lastName;
+    }
+  }
 }

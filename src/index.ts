@@ -12,7 +12,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(compression());
-
+app.use(express.json());
 app.use(helmet());
 
 app.use(
@@ -33,11 +33,11 @@ app.disable("x-powered-by");
 app.use("/api/", rootRouter);
 
 // catch 404 and forward to error handler
-app.use(
-  (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    next(httpErrors[404]);
-  }
-);
+// app.use(
+//   (req: express.Request, res: express.Response, next: express.NextFunction) => {
+//     next(httpErrors[404]);
+//   }
+// );
 
 const startServer = (PORT: any) =>
   app
