@@ -32,7 +32,6 @@ export const sendVerifyMail = async (to: string, accessToken: string) => {
   const subject = "Verify yourself!";
   const body = `<b>Please click on following link to verify yourself, link is valid for next 10 minutes only.</b>
                 <a href="${config.baseUrl}/users/verify?token=${accessToken}">Click</a>`;
-  console.log(`body`, body);
   await sendMail(to, subject, body);
 };
 
@@ -43,6 +42,5 @@ export const sendForgetPasswordMail = async (
   const subject = "Forget password!";
   const body = `<b>Please click on following link to reset your password, link is valid for next 10 minutes only.</b>
                 <a href="${config.baseUrl}/users/forget-password?token=${accessToken}">Click</a>`;
-  console.log(`body`, body);
   await sendMail(to, subject, body);
 };
