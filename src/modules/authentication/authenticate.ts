@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { NetworkAuthenticationRequire } from "http-errors";
+import { JwtPayload } from "jsonwebtoken";
+import { validateJwt } from ".";
 import config from "../../config/config";
 import {
   internalServerErrorResponse,
   unauthorizedResponse,
 } from "../common/responses";
+import { User } from "../users/user.entity";
 import { getUserById } from "../users/user.manager";
 const jwt = require("jsonwebtoken");
 
@@ -22,11 +25,13 @@ export const validateUser = async (
         .toString()
         .replace("Bearer", "")
         .trim();
-      try {
-        const payload = await jwt.verify(accessToken, config.secret);
-        req.user = await getUserById(payload.id);
-        next();
-      } catch (error) {
+
+      const payload = (await validateJwt(accessToken)) as JwtPayload;
+      if (payload) {
+        const user = await getUserById(payload.id);
+        req.user = user;
+        verifyUserRequest(res, user as User, next);
+      } else {
         unauthorizedResponse(res, "invalid access token");
       }
     } else {
@@ -34,5 +39,15 @@ export const validateUser = async (
     }
   } catch (error) {
     internalServerErrorResponse(res, error);
+  }
+};
+
+const verifyUserRequest = (res: Response, user: User, next: NextFunction) => {
+  if (!(user as User).isVerified) {
+    unauthorizedResponse(res, "email is not verified");
+  } else if (!user?.isActive) {
+    unauthorizedResponse(res, "user is not active");
+  } else {
+    next();
   }
 };

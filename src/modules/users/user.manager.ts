@@ -35,3 +35,15 @@ export const getAllUsers = async (): Promise<Array<User> | undefined> => {
     throw new Error("exception while creating user");
   }
 };
+
+export const updateUser = async (
+  payload: any,
+  userId: string
+): Promise<Array<User> | undefined> => {
+  try {
+    const user = await getUserById(userId);
+    return await getRepository(User).save({ ...user, ...payload });
+  } catch (error) {
+    throw new Error("exception while updating user");
+  }
+};

@@ -4,7 +4,7 @@ import config from "../../config/config";
 
 export const generateAccessToken = async (user: User) => {
   const payload = {
-    user: user.id,
+    id: user.id,
     email: user.email,
     organization: user.organization,
     isActive: user.isActive,
@@ -13,4 +13,12 @@ export const generateAccessToken = async (user: User) => {
     expiresIn: 36000,
     algorithm: "HS256",
   });
+};
+
+export const validateJwt = async (accessToken: string) => {
+  try {
+    return await jwt.verify(accessToken, config.secret as string);
+  } catch (error) {
+    return null;
+  }
 };
